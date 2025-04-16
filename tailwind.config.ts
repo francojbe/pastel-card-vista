@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -18,6 +19,10 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				sans: ["Inter", "sans-serif"],
+				display: ["Poppins", "sans-serif"],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -61,7 +66,12 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				// Colores personalizados para la aplicación
+				'blue-pastel': '#d3e5fa',
+				'blue-light': '#3b82f6',
+				'pink-light': '#fef2f2',
+				'pink-pastel': '#fcd5ce',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
