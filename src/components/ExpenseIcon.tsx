@@ -2,13 +2,13 @@
 import React from 'react';
 import { 
   CreditCard, ShoppingCart, Coffee, Utensils, Music, 
-  Film, Plane, Car, Spotify, Pizza, Gift, Bomb, 
+  Film, Plane, Car, HeadphonesIcon, Pizza, Gift, Bomb, 
   Wine, Apple, Book, Smartphone
 } from 'lucide-react';
 
 // Mapeo de nombres de comercios a íconos y colores
 const commerceIcons: Record<string, { icon: React.ReactNode; color: string }> = {
-  'Spotify': { icon: <Spotify size={18} />, color: 'bg-green-400/10 text-green-500' },
+  'Spotify': { icon: <Music size={18} />, color: 'bg-green-400/10 text-green-500' },
   'Uber': { icon: <Car size={18} />, color: 'bg-black/10 text-black' },
   'Netflix': { icon: <Film size={18} />, color: 'bg-red-400/10 text-red-500' },
   'Amazon': { icon: <ShoppingCart size={18} />, color: 'bg-orange-400/10 text-orange-500' },
