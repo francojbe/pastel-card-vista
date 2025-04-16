@@ -2,7 +2,8 @@
 import React from 'react';
 import { formatCurrency, formatDate } from '../utils/formatters';
 import { Expense } from '../types/expense';
-import { CreditCard } from 'lucide-react';
+import { CreditCard, Filter } from 'lucide-react';
+import ExpenseIcon from './ExpenseIcon';
 
 interface ExpenseTableProps {
   expenses: Expense[];
@@ -12,7 +13,7 @@ interface ExpenseTableProps {
 const ExpenseTable: React.FC<ExpenseTableProps> = ({ expenses, isLoading }) => {
   if (isLoading) {
     return (
-      <div className="card-dashboard min-h-[300px] flex items-center justify-center">
+      <div className="glass-card min-h-[300px] flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-light"></div>
       </div>
     );
@@ -20,53 +21,60 @@ const ExpenseTable: React.FC<ExpenseTableProps> = ({ expenses, isLoading }) => {
 
   if (expenses.length === 0) {
     return (
-      <div className="card-dashboard min-h-[300px] flex items-center justify-center">
+      <div className="glass-card min-h-[300px] flex items-center justify-center">
         <p className="text-gray-400 text-lg">No hay gastos registrados en este mes</p>
       </div>
     );
   }
 
   return (
-    <div className="card-dashboard overflow-hidden">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-display font-semibold">Gastos del Mes</h2>
-        <p className="text-sm text-gray-500">{expenses.length} transacciones</p>
+    <div className="glass-card">
+      <div className="flex justify-between items-center mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-blue-light/10 flex items-center justify-center">
+            <CreditCard className="text-blue-light" size={20} />
+          </div>
+          <h2 className="text-xl font-display font-semibold">Transacciones</h2>
+        </div>
+        <div className="flex items-center gap-2">
+          <p className="text-sm text-gray-500">{expenses.length} transacciones</p>
+          <button className="pill-button flex items-center gap-1 py-1.5 px-3">
+            <Filter size={14} />
+            <span>Filtrar</span>
+          </button>
+        </div>
       </div>
       
-      <div className="overflow-x-auto">
-        <table className="w-full">
-          <thead>
-            <tr className="border-b border-gray-100">
-              <th className="text-left pb-2 font-medium text-gray-500 text-sm">Fecha</th>
-              <th className="text-left pb-2 font-medium text-gray-500 text-sm">Comercio</th>
-              <th className="text-left pb-2 font-medium text-gray-500 text-sm">Tarjeta</th>
-              <th className="text-right pb-2 font-medium text-gray-500 text-sm">Monto</th>
-            </tr>
-          </thead>
-          <tbody>
-            {expenses.map((expense, index) => (
-              <tr 
-                key={`${expense.fecha}-${index}`} 
-                className="border-b border-gray-50 bg-pink-light hover:bg-pink-pastel/30 transition-colors"
-              >
-                <td className="py-3">
-                  <div className="flex flex-col">
-                    <span className="font-medium">{formatDate(expense.fecha)}</span>
-                    <span className="text-blue-light text-xs">{expense.hora}</span>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto pr-2">
+        {expenses.map((expense, index) => (
+          <div 
+            key={`${expense.fecha}-${index}`} 
+            className="transaction-card animate-fade-in"
+            style={{ animationDelay: `${index * 0.05}s` }}
+          >
+            <div className="flex items-center gap-3">
+              <ExpenseIcon commerceName={expense.comercio} />
+              <div className="flex-1">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="font-medium">{expense.comercio}</h3>
+                    <div className="flex items-center gap-3 text-xs text-gray-500 mt-1">
+                      <span className="text-blue-light">{formatDate(expense.fecha)}</span>
+                      <span>{expense.hora}</span>
+                    </div>
                   </div>
-                </td>
-                <td className="py-3">{expense.comercio}</td>
-                <td className="py-3">
-                  <div className="flex items-center">
-                    <CreditCard className="w-4 h-4 text-gray-400 mr-1" />
-                    <span>****{expense.tarjeta}</span>
+                  <div className="text-right">
+                    <div className="font-medium">{formatCurrency(expense.monto)}</div>
+                    <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
+                      <CreditCard size={12} />
+                      <span>****{expense.tarjeta}</span>
+                    </div>
                   </div>
-                </td>
-                <td className="py-3 text-right font-medium">{formatCurrency(expense.monto)}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

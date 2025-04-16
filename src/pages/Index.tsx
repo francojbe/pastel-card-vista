@@ -68,19 +68,19 @@ const Dashboard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50/50">
       {/* Header */}
-      <header className="bg-white border-b border-gray-100 sticky top-0 z-10">
+      <header className="bg-white border-b border-gray-100 sticky top-0 z-10 shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <Logo />
         </div>
       </header>
       
       {/* Dashboard content */}
-      <main className="container mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+      <main className="container mx-auto px-4 py-8 animate-fade-in">
+        <div className="grid grid-cols-1 gap-6">
           {/* Totales del mes */}
-          <div className="md:col-span-12">
+          <div>
             <MonthlyTotal
               total={expenseData.total_mes}
               selectedMonth={selectedMonth}
@@ -89,29 +89,31 @@ const Dashboard: React.FC = () => {
             />
           </div>
           
-          {/* Gráfico semanal */}
-          <div className="md:col-span-12 lg:col-span-5">
-            <WeeklyChart 
-              data={expenseData.resumen_semanal} 
-              isLoading={isLoading} 
-            />
-          </div>
-          
-          {/* Tabla de gastos */}
-          <div className="md:col-span-12 lg:col-span-7">
-            <ExpenseTable 
-              expenses={expenseData.gastos} 
-              isLoading={isLoading} 
-            />
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+            {/* Gráfico semanal */}
+            <div className="md:col-span-12 lg:col-span-5">
+              <WeeklyChart 
+                data={expenseData.resumen_semanal} 
+                isLoading={isLoading} 
+              />
+            </div>
+            
+            {/* Tabla de gastos */}
+            <div className="md:col-span-12 lg:col-span-7">
+              <ExpenseTable 
+                expenses={expenseData.gastos} 
+                isLoading={isLoading} 
+              />
+            </div>
           </div>
         </div>
       </main>
       
       {/* Footer */}
-      <footer className="border-t border-gray-100 py-4 mt-auto">
+      <footer className="border-t border-gray-100 py-4 mt-auto bg-white">
         <div className="container mx-auto px-4">
           <p className="text-center text-sm text-gray-500">
-            © 2025 CardVista — Dashboard de gastos
+            © 2025 ClariFi — Control Financiero Inteligente
           </p>
         </div>
       </footer>

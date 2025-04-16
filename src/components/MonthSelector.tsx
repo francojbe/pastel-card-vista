@@ -1,6 +1,6 @@
 
-import React from 'react';
-import { ChevronDown } from 'lucide-react';
+import React, { useState } from 'react';
+import { ChevronDown, Calendar } from 'lucide-react';
 import { getMonthOptions } from '../utils/formatters';
 
 interface MonthSelectorProps {
@@ -9,6 +9,7 @@ interface MonthSelectorProps {
 }
 
 const MonthSelector: React.FC<MonthSelectorProps> = ({ selectedMonth, onMonthChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
   const monthOptions = getMonthOptions();
   
   // Encuentra la etiqueta para el mes seleccionado
@@ -16,31 +17,34 @@ const MonthSelector: React.FC<MonthSelectorProps> = ({ selectedMonth, onMonthCha
 
   return (
     <div className="relative inline-block">
-      <div 
-        className="flex items-center gap-2 bg-white border border-gray-200 rounded-xl py-2 px-4 cursor-pointer hover:bg-gray-50 transition-colors"
-        onClick={() => document.getElementById('month-dropdown')?.classList.toggle('hidden')}
+      <button 
+        className="pill-button"
+        onClick={() => setIsOpen(!isOpen)}
+        type="button"
       >
-        <span className="font-medium">{selectedLabel}</span>
-        <ChevronDown size={16} className="text-gray-500" />
-      </div>
+        <Calendar size={16} className="text-blue-light" />
+        <span>{selectedLabel}</span>
+        <ChevronDown size={14} className="text-gray-500" />
+      </button>
       
-      <div 
-        id="month-dropdown"
-        className="absolute z-10 hidden mt-1 bg-white border border-gray-200 rounded-xl shadow-lg py-1 w-full max-h-60 overflow-auto"
-      >
-        {monthOptions.map((option) => (
-          <div 
-            key={option.value}
-            className={`px-4 py-2 cursor-pointer hover:bg-gray-50 ${option.value === selectedMonth ? 'bg-blue-pastel/50 font-medium' : ''}`}
-            onClick={() => {
-              onMonthChange(option.value);
-              document.getElementById('month-dropdown')?.classList.add('hidden');
-            }}
-          >
-            {option.label}
-          </div>
-        ))}
-      </div>
+      {isOpen && (
+        <div 
+          className="absolute z-10 mt-2 right-0 bg-white border border-gray-200 rounded-xl shadow-lg py-1 w-48 max-h-60 overflow-auto animate-fade-in"
+        >
+          {monthOptions.map((option) => (
+            <div 
+              key={option.value}
+              className={`px-4 py-2 cursor-pointer hover:bg-blue-50 transition-colors ${option.value === selectedMonth ? 'bg-blue-50 font-medium text-blue-light' : ''}`}
+              onClick={() => {
+                onMonthChange(option.value);
+                setIsOpen(false);
+              }}
+            >
+              {option.label}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

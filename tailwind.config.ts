@@ -21,7 +21,7 @@ export default {
 		extend: {
 			fontFamily: {
 				sans: ["Inter", "sans-serif"],
-				display: ["Poppins", "sans-serif"],
+				display: ["DM Sans", "sans-serif"],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -68,8 +68,9 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				// Colores personalizados para la aplicación
-				'blue-pastel': '#d3e5fa',
 				'blue-light': '#3b82f6',
+				'green-mint': '#10B981',
+				'blue-pastel': '#d3e5fa',
 				'pink-light': '#fef2f2',
 				'pink-pastel': '#fcd5ce',
 			},
