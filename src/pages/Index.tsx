@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Logo from '../components/Logo';
 import MonthlyTotal from '../components/MonthlyTotal';
 import WeeklyChart from '../components/WeeklyChart';
@@ -7,6 +7,8 @@ import ExpenseTable from '../components/ExpenseTable';
 import { getMonthOptions } from '../utils/formatters';
 import { ExpenseData } from '../types/expense';
 import { toast } from 'sonner';
+import { RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const Dashboard: React.FC = () => {
   // Estado para el mes seleccionado (predeterminado: mes actual)
@@ -21,10 +23,14 @@ const Dashboard: React.FC = () => {
   
   // Estado de carga
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+  
+  // Referencia al intervalo para limpiarlo cuando el componente se desmonta
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Función para cargar los datos desde el webhook
-  const fetchExpenseData = async (month: string) => {
-    setIsLoading(true);
+  const fetchExpenseData = useCallback(async (month: string, showToast: boolean = false) => {
+    setIsRefreshing(true);
     
     try {
       const response = await fetch(`https://n8n.efinnovation.cl/webhook/Envio-data?mes=${month}`);
@@ -43,6 +49,10 @@ const Dashboard: React.FC = () => {
       };
       
       setExpenseData(validatedData);
+      
+      if (showToast) {
+        toast.success("Datos actualizados correctamente");
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Error al cargar los datos. Intente de nuevo.");
@@ -54,13 +64,40 @@ const Dashboard: React.FC = () => {
       });
     } finally {
       setIsLoading(false);
+      setIsRefreshing(false);
     }
+  }, []);
+
+  // Función para manejar la actualización manual
+  const handleRefresh = () => {
+    fetchExpenseData(selectedMonth, true);
   };
 
   // Efecto para cargar datos al cambiar de mes
   useEffect(() => {
     fetchExpenseData(selectedMonth);
-  }, [selectedMonth]);
+  }, [selectedMonth, fetchExpenseData]);
+
+  // Efecto para configurar la actualización automática cada minuto
+  useEffect(() => {
+    // Limpiar cualquier intervalo existente
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+
+    // Configurar un nuevo intervalo para actualizar cada minuto (60000 ms)
+    intervalRef.current = setInterval(() => {
+      fetchExpenseData(selectedMonth);
+    }, 60000);
+
+    // Limpiar el intervalo cuando el componente se desmonte
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [selectedMonth, fetchExpenseData]);
 
   // Función para manejar el cambio de mes
   const handleMonthChange = (month: string) => {
@@ -71,8 +108,18 @@ const Dashboard: React.FC = () => {
     <div className="min-h-screen bg-gray-50/50">
       {/* Header */}
       <header className="bg-white border-b border-gray-100 sticky top-0 z-10 shadow-sm">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Logo />
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={handleRefresh}
+            disabled={isRefreshing}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw size={16} className={isRefreshing ? "animate-spin" : ""} />
+            <span>Actualizar datos</span>
+          </Button>
         </div>
       </header>
       
