@@ -9,10 +9,13 @@ interface WeeklyChartProps {
 }
 
 const WeeklyChart: React.FC<WeeklyChartProps> = ({ data, isLoading }) => {
-  const chartData = data.map((amount, index) => ({
-    name: `Semana ${index + 1}`,
-    monto: amount,
-  }));
+  // Ensure data is an array before mapping
+  const chartData = Array.isArray(data) 
+    ? data.map((amount, index) => ({
+        name: `Semana ${index + 1}`,
+        monto: amount,
+      })) 
+    : [];
 
   if (isLoading) {
     return (
@@ -22,7 +25,7 @@ const WeeklyChart: React.FC<WeeklyChartProps> = ({ data, isLoading }) => {
     );
   }
 
-  if (data.length === 0) {
+  if (!Array.isArray(data) || data.length === 0) {
     return (
       <div className="card-dashboard h-[300px] flex items-center justify-center">
         <p className="text-gray-400 text-lg">No hay datos para mostrar</p>

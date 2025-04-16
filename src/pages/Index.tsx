@@ -33,8 +33,16 @@ const Dashboard: React.FC = () => {
         throw new Error(`Error al cargar datos: ${response.status}`);
       }
       
-      const data: ExpenseData = await response.json();
-      setExpenseData(data);
+      const data = await response.json();
+      
+      // Ensure the data has the expected structure
+      const validatedData: ExpenseData = {
+        total_mes: data.total_mes || 0,
+        gastos: Array.isArray(data.gastos) ? data.gastos : [],
+        resumen_semanal: Array.isArray(data.resumen_semanal) ? data.resumen_semanal : []
+      };
+      
+      setExpenseData(validatedData);
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Error al cargar los datos. Intente de nuevo.");
