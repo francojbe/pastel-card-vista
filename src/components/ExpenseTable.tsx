@@ -1,9 +1,9 @@
-
 import React from 'react';
 import { formatCurrency, formatDate } from '../utils/formatters';
 import { Expense } from '../types/expense';
 import { CreditCard, Filter } from 'lucide-react';
 import ExpenseIcon from './ExpenseIcon';
+import { useAmountVisibility } from '../contexts/AmountVisibilityContext';
 
 interface ExpenseTableProps {
   expenses: Expense[];
@@ -11,6 +11,8 @@ interface ExpenseTableProps {
 }
 
 const ExpenseTable: React.FC<ExpenseTableProps> = ({ expenses, isLoading }) => {
+  const { isAmountVisible } = useAmountVisibility();
+
   if (isLoading) {
     return (
       <div className="glass-card min-h-[300px] flex items-center justify-center">
@@ -64,7 +66,9 @@ const ExpenseTable: React.FC<ExpenseTableProps> = ({ expenses, isLoading }) => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="font-medium">{formatCurrency(expense.monto)}</div>
+                    <div className="font-medium">
+                      {isAmountVisible ? formatCurrency(expense.monto) : '••••••'}
+                    </div>
                     <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
                       <CreditCard size={12} />
                       <span>****{expense.tarjeta}</span>

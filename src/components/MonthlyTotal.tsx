@@ -3,6 +3,7 @@ import React from 'react';
 import { formatCurrency } from '../utils/formatters';
 import MonthSelector from './MonthSelector';
 import { Wallet } from 'lucide-react';
+import { useAmountVisibility } from '../contexts/AmountVisibilityContext';
 
 interface MonthlyTotalProps {
   total: number;
@@ -17,6 +18,8 @@ const MonthlyTotal: React.FC<MonthlyTotalProps> = ({
   onMonthChange,
   isLoading 
 }) => {
+  const { isAmountVisible } = useAmountVisibility();
+
   return (
     <div className="glass-card bg-gradient-to-r from-blue-50 to-white">
       <div className="flex justify-between items-center mb-6">
@@ -35,7 +38,7 @@ const MonthlyTotal: React.FC<MonthlyTotalProps> = ({
         </div>
       ) : (
         <div className="font-display font-bold text-4xl text-blue-light animate-fade-in">
-          {formatCurrency(total)}
+          {isAmountVisible ? formatCurrency(total) : '••••••'}
         </div>
       )}
     </div>
