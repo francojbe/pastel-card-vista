@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
-import { InputOTP, InputOTPGroup, InputOTPSlot } from '@/components/ui/input-otp';
+import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -36,17 +36,13 @@ const PinAuth: React.FC<PinAuthProps> = ({ onSuccess }) => {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <InputOTP
+            <Input
+              type="password"
               value={value}
-              onChange={setValue}
+              onChange={(e) => setValue(e.target.value)}
+              placeholder="Ingrese su PIN"
               maxLength={8}
-              render={({ slots }) => (
-                <InputOTPGroup className="gap-2 justify-center">
-                  {slots.map((slot, i) => (
-                    <InputOTPSlot key={i} index={i} {...slot} />
-                  ))}
-                </InputOTPGroup>
-              )}
+              className="text-center text-lg"
             />
             <Button type="submit" className="w-full">
               Verificar
