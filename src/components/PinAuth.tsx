@@ -42,8 +42,8 @@ const PinAuth: React.FC<PinAuthProps> = ({ onSuccess }) => {
               maxLength={8}
               render={({ slots }) => (
                 <InputOTPGroup className="gap-2 justify-center">
-                  {slots.map((slot, index) => (
-                    <InputOTPSlot key={index} {...slot} />
+                  {slots.map((slot, i) => (
+                    <InputOTPSlot key={i} index={i} {...slot} />
                   ))}
                 </InputOTPGroup>
               )}
