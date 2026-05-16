@@ -23,15 +23,18 @@ const App = () => {
         <TooltipProvider>
           <Toaster />
           <Sonner />
-          {!isAuthenticated && <PinAuth onSuccess={() => setIsAuthenticated(true)} />}
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/analytics" element={<Analytics />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
+          {isAuthenticated ? (
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/analytics" element={<Analytics />} />
+                <Route path="/profile" element={<Profile />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </BrowserRouter>
+          ) : (
+            <PinAuth onSuccess={() => setIsAuthenticated(true)} />
+          )}
         </TooltipProvider>
       </AmountVisibilityProvider>
     </QueryClientProvider>
