@@ -1,8 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Lock, ShieldCheck } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { ShieldCheck } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Preferences } from '@capacitor/preferences';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 
 interface PinAuthProps {
   onSuccess: () => void;
@@ -11,15 +13,28 @@ interface PinAuthProps {
 const DEFAULT_PIN = "22091992";
 const PIN_KEY = "clarifi_pin";
 
-export const getStoredPin = () => localStorage.getItem(PIN_KEY) || DEFAULT_PIN;
-export const setStoredPin = (pin: string) => localStorage.setItem(PIN_KEY, pin);
+export const getStoredPin = async () => {
+  const { value } = await Preferences.get({ key: PIN_KEY });
+  return value || DEFAULT_PIN;
+};
+
+export const setStoredPin = async (pin: string) => {
+  await Preferences.set({ key: PIN_KEY, value: pin });
+};
 
 const PinAuth: React.FC<PinAuthProps> = ({ onSuccess }) => {
   const [pin, setPin] = useState("");
   const [isError, setIsError] = useState(false);
+  const [correctPin, setCorrectPin] = useState<string | null>(null);
   const pinLength = 8;
 
-  const correctPin = getStoredPin();
+  useEffect(() => {
+    const loadPin = async () => {
+      const stored = await getStoredPin();
+      setCorrectPin(stored);
+    };
+    loadPin();
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -37,7 +52,7 @@ const PinAuth: React.FC<PinAuthProps> = ({ onSuccess }) => {
   }, [pin]);
 
   useEffect(() => {
-    if (pin.length === pinLength) {
+    if (pin.length === pinLength && correctPin !== null) {
       if (pin === correctPin) {
         onSuccess();
         toast.success("Acceso concedido");
@@ -47,7 +62,7 @@ const PinAuth: React.FC<PinAuthProps> = ({ onSuccess }) => {
         setTimeout(() => setPin(""), 500);
       }
     }
-  }, [pin, onSuccess]);
+  }, [pin, onSuccess, correctPin]);
 
   return (
     <div className="fixed inset-0 bg-[#F5F7FB] z-[100] flex flex-col items-center justify-center p-6">
@@ -55,9 +70,9 @@ const PinAuth: React.FC<PinAuthProps> = ({ onSuccess }) => {
         <motion.div 
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="mb-8 w-20 h-20 rounded-[24px] bg-[#2563FF] flex items-center justify-center shadow-neo-button"
+          className="mb-8"
         >
-          <Lock className="text-white" size={32} />
+          <img src="/logo.png" alt="Logo" className="w-32 h-auto" />
         </motion.div>
 
         <h1 className="text-[24px] font-bold text-[#0F172A] mb-2 text-center tracking-tight">Seguridad ClariFi</h1>
@@ -84,7 +99,8 @@ const PinAuth: React.FC<PinAuthProps> = ({ onSuccess }) => {
           {[1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, "⌫"].map((num, i) => (
             <button
               key={i}
-              onClick={() => {
+              onClick={async () => {
+                await Haptics.impact({ style: ImpactStyle.Light });
                 if (num === "⌫") {
                   setPin(prev => prev.slice(0, -1));
                 } else if (typeof num === "number" && pin.length < pinLength) {

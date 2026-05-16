@@ -65,8 +65,9 @@ const Profile: React.FC = () => {
     }
   };
 
-  const handleChangePin = () => {
-    if (currentPin !== getStoredPin()) {
+  const handleChangePin = async () => {
+    const storedPin = await getStoredPin();
+    if (currentPin !== storedPin) {
       toast.error("El PIN actual es incorrecto");
       return;
     }
@@ -78,7 +79,7 @@ const Profile: React.FC = () => {
       toast.error("Los PINs no coinciden");
       return;
     }
-    setStoredPin(newPin);
+    await setStoredPin(newPin);
     toast.success("PIN actualizado correctamente");
     setShowPinModal(false);
     setCurrentPin('');
