@@ -1,6 +1,15 @@
 # Build stage
 FROM node:18-alpine as build-stage
 WORKDIR /app
+
+# Definir argumentos para que Vite los inyecte durante la compilación
+ARG VITE_SUPABASE_URL
+ARG VITE_SUPABASE_ANON_KEY
+
+# Hacer que los argumentos estén disponibles como variables de entorno para npm run build
+ENV VITE_SUPABASE_URL=$VITE_SUPABASE_URL
+ENV VITE_SUPABASE_ANON_KEY=$VITE_SUPABASE_ANON_KEY
+
 COPY package*.json ./
 RUN npm install
 COPY . .
