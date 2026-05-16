@@ -1,81 +1,119 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Card, CardHeader, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+
+import React, { useState, useEffect } from 'react';
 import { toast } from 'sonner';
-import { Input } from '@/components/ui/input';
+import { Lock, ShieldCheck } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface PinAuthProps {
   onSuccess: () => void;
 }
 
-const PinAuth: React.FC<PinAuthProps> = ({
-  onSuccess
-}) => {
-  const [value, setValue] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
-  const correctPin = "22091992";
+const DEFAULT_PIN = "22091992";
+const PIN_KEY = "clarifi_pin";
+
+export const getStoredPin = () => localStorage.getItem(PIN_KEY) || DEFAULT_PIN;
+export const setStoredPin = (pin: string) => localStorage.setItem(PIN_KEY, pin);
+
+const PinAuth: React.FC<PinAuthProps> = ({ onSuccess }) => {
+  const [pin, setPin] = useState("");
+  const [isError, setIsError] = useState(false);
+  const pinLength = 8;
+
+  const correctPin = getStoredPin();
 
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Backspace") {
+        setPin(prev => prev.slice(0, -1));
+        setIsError(false);
+      } else if (/^\d$/.test(e.key) && pin.length < pinLength) {
+        setPin(prev => prev + e.key);
+        setIsError(false);
+      }
+    };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (value === correctPin) {
-      onSuccess();
-      toast.success("PIN correcto");
-    } else {
-      toast.error("PIN incorrecto");
-      setValue("");
-      inputRef.current?.focus();
-    }
-  };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [pin]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value.replace(/\D/g, '');
-    if (input.length <= 8) {
-      setValue(input);
+  useEffect(() => {
+    if (pin.length === pinLength) {
+      if (pin === correctPin) {
+        onSuccess();
+        toast.success("Acceso concedido");
+      } else {
+        setIsError(true);
+        toast.error("PIN incorrecto");
+        setTimeout(() => setPin(""), 500);
+      }
     }
-  };
+  }, [pin, onSuccess]);
 
   return (
-    <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center">
-      <Card className="w-[350px] overflow-hidden border-accent shadow-lg">
-        <CardHeader className="bg-gradient-to-r from-accent to-accent/80 p-6">
-          <h2 className="font-bold text-accent-foreground text-center text-lg my-0 py-0 px-0 mx-0">
-            Ingresa tu PIN de verificación
-          </h2>
-        </CardHeader>
-        <CardContent className="p-6 space-y-8 bg-card my-0">
-          <form onSubmit={handleSubmit} className="space-y-8 py-0 px-0">
-            <div className="rounded-lg p-4">
-              <Input 
-                ref={inputRef}
-                type="password"
-                value={value}
-                onChange={handleInputChange}
-                className="tracking-[1em] text-center text-xl bg-transparent border-accent/20 
-                          focus:border-accent text-accent h-12"
-                maxLength={8}
-                autoComplete="off"
-                placeholder="········"
-              />
-            </div>
-            <div className="text-center space-y-4">
-              <p className="text-sm text-muted-foreground">
-                Te lo preguntaremos periódicamente para ayudarte a recordarlo.
-              </p>
-              <Button 
-                variant="link" 
-                className="text-accent hover:text-accent/80"
-                onClick={() => toast.error("Función no disponible")}
-              >
-                ¿Olvidaste tu PIN?
-              </Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
+    <div className="fixed inset-0 bg-[#F5F7FB] z-[100] flex flex-col items-center justify-center p-6">
+      <div className="max-w-xs w-full flex flex-col items-center">
+        <motion.div 
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="mb-8 w-20 h-20 rounded-[24px] bg-[#2563FF] flex items-center justify-center shadow-neo-button"
+        >
+          <Lock className="text-white" size={32} />
+        </motion.div>
+
+        <h1 className="text-[24px] font-bold text-[#0F172A] mb-2 text-center tracking-tight">Seguridad ClariFi</h1>
+        <p className="text-[#64748B] text-sm mb-12 text-center font-medium">Ingresa tu código de 8 dígitos para desbloquear tu dashboard financiero.</p>
+
+        <motion.div 
+          animate={isError ? { x: [-10, 10, -10, 10, 0] } : {}}
+          transition={{ duration: 0.4 }}
+          className="flex gap-3 mb-16"
+        >
+          {Array.from({ length: pinLength }).map((_, i) => (
+            <div 
+              key={i}
+              className={`w-3.5 h-3.5 rounded-full border-2 transition-all duration-300 ${
+                i < pin.length 
+                  ? 'bg-[#2563FF] border-[#2563FF] scale-110' 
+                  : isError ? 'border-[#FF5A5F] bg-[#FF5A5F]/10' : 'border-[#E5EAF2] bg-transparent'
+              }`}
+            />
+          ))}
+        </motion.div>
+
+        <div className="grid grid-cols-3 gap-6 w-full max-w-[280px] mb-12">
+          {[1, 2, 3, 4, 5, 6, 7, 8, 9, "", 0, "⌫"].map((num, i) => (
+            <button
+              key={i}
+              onClick={() => {
+                if (num === "⌫") {
+                  setPin(prev => prev.slice(0, -1));
+                } else if (typeof num === "number" && pin.length < pinLength) {
+                  setPin(prev => prev + num);
+                }
+              }}
+              className={`w-16 h-16 rounded-2xl flex items-center justify-center text-xl font-bold transition-all ${
+                num === "" 
+                  ? "pointer-events-none opacity-0" 
+                  : "bg-white text-[#0F172A] active:scale-90 hover:bg-[#F9FAFC] shadow-sm border border-[#E5EAF2]"
+              }`}
+            >
+              {num}
+            </button>
+          ))}
+        </div>
+
+        <button 
+          className="text-[#2563FF] font-bold text-sm hover:underline"
+          onClick={() => toast.error("Función no disponible")}
+        >
+          ¿Olvidaste tu PIN?
+        </button>
+      </div>
+
+      <div className="absolute bottom-10 flex items-center gap-2 text-[#94A3B8]">
+        <ShieldCheck size={16} />
+        <span className="text-[10px] uppercase font-bold tracking-[2px]">Encriptación Bancaria</span>
+      </div>
     </div>
   );
 };

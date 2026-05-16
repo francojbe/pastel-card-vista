@@ -1,7 +1,4 @@
-
-import React, { useState } from 'react';
-import { ChevronDown, Calendar } from 'lucide-react';
-import { getMonthOptions } from '../utils/formatters';
+import React from 'react';
 
 interface MonthSelectorProps {
   selectedMonth: string;
@@ -9,42 +6,28 @@ interface MonthSelectorProps {
 }
 
 const MonthSelector: React.FC<MonthSelectorProps> = ({ selectedMonth, onMonthChange }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const monthOptions = getMonthOptions();
-  
-  // Encuentra la etiqueta para el mes seleccionado
-  const selectedLabel = monthOptions.find(option => option.value === selectedMonth)?.label || '';
+  const periods = [
+    { label: 'Semana', value: 'week' },
+    { label: 'Mes', value: 'month' },
+    { label: 'Año', value: 'year' },
+    { label: 'Todo', value: 'all' },
+  ];
 
   return (
-    <div className="relative inline-block">
-      <button 
-        className="pill-button"
-        onClick={() => setIsOpen(!isOpen)}
-        type="button"
-      >
-        <Calendar size={16} className="text-blue-light" />
-        <span>{selectedLabel}</span>
-        <ChevronDown size={14} className="text-gray-500" />
-      </button>
-      
-      {isOpen && (
-        <div 
-          className="absolute z-10 mt-2 right-0 bg-white border border-gray-200 rounded-xl shadow-lg py-1 w-48 max-h-60 overflow-auto animate-fade-in"
+    <div className="w-full bg-[#F1F5F9] p-1 rounded-2xl flex items-center shadow-inner">
+      {periods.map((period) => (
+        <button 
+          key={period.value}
+          onClick={() => onMonthChange(period.value)}
+          className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all duration-300 ${
+            period.value === selectedMonth 
+            ? 'bg-white text-[#2563FF] shadow-sm' 
+            : 'text-[#64748B] hover:text-[#0F172A]'
+          }`}
         >
-          {monthOptions.map((option) => (
-            <div 
-              key={option.value}
-              className={`px-4 py-2 cursor-pointer hover:bg-blue-50 transition-colors ${option.value === selectedMonth ? 'bg-blue-50 font-medium text-blue-light' : ''}`}
-              onClick={() => {
-                onMonthChange(option.value);
-                setIsOpen(false);
-              }}
-            >
-              {option.label}
-            </div>
-          ))}
-        </div>
-      )}
+          {period.label}
+        </button>
+      ))}
     </div>
   );
 };

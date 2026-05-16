@@ -1,30 +1,43 @@
 
 import React from 'react';
-import { 
-  CreditCard, ShoppingCart, Coffee, Utensils, Music, 
-  Film, Plane, Car, HeadphonesIcon, Pizza, Gift, Bomb, 
-  Wine, Apple, Book, Smartphone
-} from 'lucide-react';
 
-// Mapeo de nombres de comercios a íconos y colores
-const commerceIcons: Record<string, { icon: React.ReactNode; color: string }> = {
-  'Spotify': { icon: <Music size={18} />, color: 'bg-green-400/10 text-green-500' },
-  'Uber': { icon: <Car size={18} />, color: 'bg-black/10 text-black' },
-  'Netflix': { icon: <Film size={18} />, color: 'bg-red-400/10 text-red-500' },
-  'Amazon': { icon: <ShoppingCart size={18} />, color: 'bg-orange-400/10 text-orange-500' },
-  'Starbucks': { icon: <Coffee size={18} />, color: 'bg-green-800/10 text-green-800' },
-  'Apple': { icon: <Apple size={18} />, color: 'bg-gray-800/10 text-gray-800' },
-  'McDonalds': { icon: <Utensils size={18} />, color: 'bg-yellow-600/10 text-yellow-600' },
-  'LATAM': { icon: <Plane size={18} />, color: 'bg-blue-600/10 text-blue-600' },
-  'Dominos': { icon: <Pizza size={18} />, color: 'bg-blue-500/10 text-blue-500' },
-  'Falabella': { icon: <ShoppingCart size={18} />, color: 'bg-green-700/10 text-green-700' },
-  'Cinemark': { icon: <Film size={18} />, color: 'bg-purple-500/10 text-purple-500' },
-  'Lider': { icon: <ShoppingCart size={18} />, color: 'bg-blue-400/10 text-blue-400' },
-  'MercadoLibre': { icon: <Gift size={18} />, color: 'bg-yellow-500/10 text-yellow-500' },
-  'Jumbo': { icon: <ShoppingCart size={18} />, color: 'bg-green-500/10 text-green-500' },
-  'Tinder': { icon: <Bomb size={18} />, color: 'bg-red-600/10 text-red-600' },
-  'GiftCard': { icon: <Gift size={18} />, color: 'bg-pink-500/10 text-pink-500' },
-  'Viña': { icon: <Wine size={18} />, color: 'bg-purple-800/10 text-purple-800' }
+interface CategoryConfig {
+  emoji: string;
+  bgColor: string;
+  keywords: string[];
+}
+
+const categories: Record<string, CategoryConfig> = {
+  alimentacion: {
+    emoji: '🍴',
+    bgColor: 'bg-[#FF9500]', // iOS Orange
+    keywords: ['restaurant', 'cafe', 'starbucks', 'mcdonalds', 'pizza', 'burger', 'eats', 'rappi', 'food', 'comida', 'bistro', 'bakery', 'pasteleria', 'sushi', 'dunkin']
+  },
+  transporte: {
+    emoji: '🚗',
+    bgColor: 'bg-[#5856D6]', // iOS Indigo
+    keywords: ['uber', 'cabify', 'didi', 'gas', 'shell', 'copec', 'petrobras', 'parking', 'estacionamiento', 'peaje', 'metro', 'transantiago', 'autopista', 'latam', 'sky', 'jetsmart']
+  },
+  compras: {
+    emoji: '🛍️',
+    bgColor: 'bg-[#FF2D55]', // iOS Pink
+    keywords: ['amazon', 'lider', 'jumbo', 'unimarc', 'mercado', 'mall', 'falabella', 'ripley', 'paris', 'sodimac', 'easy', 'walmart', 'tienda', 'supermercado', 'express', 'tottus', 'h&m', 'zara']
+  },
+  suscripciones: {
+    emoji: '📱',
+    bgColor: 'bg-[#007AFF]', // iOS Blue
+    keywords: ['netflix', 'spotify', 'disney', 'apple', 'google', 'cloud', 'adobe', 'microsoft', 'hbomax', 'prime', 'crunchyroll', 'youtube', 'patreon']
+  },
+  salud: {
+    emoji: '💊',
+    bgColor: 'bg-[#34C759]', // iOS Green
+    keywords: ['pharmacy', 'farmacia', 'doctor', 'hospital', 'clinica', 'dental', 'optica', 'cruz verde', 'salcobrand', 'ahumada', 'medicina']
+  },
+  servicios: {
+    emoji: '🧾',
+    bgColor: 'bg-[#AF52DE]', // iOS Purple
+    keywords: ['agua', 'luz', 'gas', 'vtr', 'movistar', 'entel', 'claro', 'wom', 'internet', 'seguro', 'banco', 'santander', 'chile', 'itau', 'bci', 'tgr', 'sii']
+  }
 };
 
 interface ExpenseIconProps {
@@ -32,21 +45,26 @@ interface ExpenseIconProps {
 }
 
 const ExpenseIcon: React.FC<ExpenseIconProps> = ({ commerceName }) => {
-  // Buscar un icono que coincida con el comercio (insensible a mayúsculas/minúsculas)
-  const matchedCommerce = Object.keys(commerceIcons).find(
-    key => commerceName.toLowerCase().includes(key.toLowerCase())
+  const name = commerceName.toLowerCase();
+
+  // Buscar coincidencia por categoría
+  const foundCategory = Object.entries(categories).find(([_, config]) => 
+    config.keywords.some(keyword => name.includes(keyword))
   );
 
-  // Si hay coincidencia, usar ese icono
-  if (matchedCommerce) {
-    const { icon, color } = commerceIcons[matchedCommerce];
-    return <div className={`expense-icon ${color}`}>{icon}</div>;
+  if (foundCategory) {
+    const [_, config] = foundCategory;
+    return (
+      <div className={`w-11 h-11 rounded-[14px] flex items-center justify-center bg-[#F1F5F9] text-[20px] transition-transform duration-300 group-hover:scale-110`}>
+        {config.emoji}
+      </div>
+    );
   }
 
-  // Icono predeterminado si no hay coincidencia
+  // Fallback estilo Apple Pay
   return (
-    <div className="expense-icon bg-gray-200/50 text-gray-500">
-      <CreditCard size={18} />
+    <div className="w-11 h-11 rounded-[14px] flex items-center justify-center bg-[#F1F5F9] text-xl transition-transform duration-300 group-hover:scale-110">
+      💳
     </div>
   );
 };

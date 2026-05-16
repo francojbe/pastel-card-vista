@@ -1,5 +1,5 @@
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,65 +7,35 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 220 33% 97%; /* #F5F7FB */
+    --foreground: 222 47% 11%; /* #0F172A */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%; /* #FFFFFF */
+    --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 221.2 83.2% 53.3%;
+    --primary: 224 100% 57%; /* #2563FF */
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 221 100% 97%; /* #EFF4FF */
+    --secondary-foreground: 224 100% 57%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 214 32% 91%; /* #E5EAF2 */
+    --muted-foreground: 215 16% 47%;
 
-    --accent: 159 84% 39%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-
-    --radius: 1rem;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 159 84% 39%;
+    --accent: 224 100% 57%;
     --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 62.8% 30.6%;
+    --destructive: 354 100% 59%; /* #FF5A5F */
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --border: 214 32% 91%; /* #E5EAF2 */
+    --input: 214 32% 91%;
+    --ring: 224 100% 57%;
+
+    --radius: 24px;
   }
 }
 
@@ -75,39 +45,40 @@
   }
 
   body {
-    @apply bg-gray-50 text-foreground font-sans;
+    @apply bg-[#f8fafc] text-foreground font-sans;
   }
 }
 
-.card-dashboard {
-  @apply bg-white rounded-xl shadow-md border border-gray-100 p-6 transition-all duration-300 hover:shadow-lg;
+@layer components {
+  .neo-card {
+    @apply bg-white rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,0.06)] border border-[rgba(15,23,42,0.04)] p-6 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .neo-button-primary {
+    @apply bg-[#2563FF] text-white h-[52px] rounded-[16px] font-bold shadow-[0_10px_20px_rgba(37,99,255,0.18)] transition-all duration-200 active:scale-95;
+  }
+
+  .neo-button-secondary {
+    @apply bg-[#EFF4FF] text-[#2563FF] h-[52px] rounded-[16px] font-bold transition-all duration-200 active:scale-95;
+  }
 }
 
-.glass-card {
-  @apply bg-white/70 backdrop-blur-sm rounded-xl shadow-md border border-gray-100/50 p-6 transition-all duration-300 hover:shadow-lg;
+.hero-gradient {
+  background: linear-gradient(135deg, #2563FF 0%, #4F8CFF 100%);
 }
 
-.pill-button {
-  @apply inline-flex items-center gap-2 bg-white border border-gray-200 rounded-full py-2 px-4 
-  text-sm font-medium text-gray-700 transition-all duration-200
-  hover:border-blue-300 hover:shadow-sm;
-}
-
-/* Animaciones */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.5s ease-out forwards;
-}
-
-.transaction-card {
-  @apply p-4 rounded-xl border border-gray-100 bg-white shadow-sm 
-  transition-all duration-200 hover:shadow-md hover:border-blue-100;
+.surface-gradient {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F7F9FC 100%);
 }
 
 .expense-icon {
-  @apply p-2 rounded-lg flex items-center justify-center;
+  @apply w-[44px] h-[44px] rounded-[14px] flex items-center justify-center bg-[#F1F5F9] text-[#2563FF];
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

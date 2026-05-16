@@ -1,103 +1,102 @@
 
 import React from 'react';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { formatCurrency } from '../utils/formatters';
-import { TrendingUp } from 'lucide-react';
+import { BarChart2 } from 'lucide-react';
 
 interface WeeklyChartProps {
-  data: number[];
+  data: { name: string; monto: number }[];
   isLoading: boolean;
 }
 
 const WeeklyChart: React.FC<WeeklyChartProps> = ({ data, isLoading }) => {
-  // Ensure data is an array before mapping
-  const chartData = Array.isArray(data) 
-    ? data.map((amount, index) => ({
-        name: `Semana ${index + 1}`,
-        monto: amount,
-      })) 
-    : [];
+  const chartData = data;
 
   if (isLoading) {
     return (
-      <div className="glass-card h-[300px] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-light"></div>
-      </div>
-    );
-  }
-
-  if (!Array.isArray(data) || data.length === 0) {
-    return (
-      <div className="glass-card h-[300px] flex items-center justify-center">
-        <p className="text-gray-400 text-lg">No hay datos para mostrar</p>
+      <div className="neo-card h-[380px] flex items-center justify-center">
+        <div className="h-10 w-10 border-4 border-[#2563FF]/10 border-t-[#2563FF] animate-spin rounded-full" />
       </div>
     );
   }
 
   return (
-    <div className="glass-card">
-      <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-full bg-green-mint/10 flex items-center justify-center">
-          <TrendingUp className="text-green-mint" size={20} />
+    <div className="neo-card h-[380px] flex flex-col">
+      <div className="flex items-center justify-between mb-10">
+        <div className="flex items-center gap-4">
+          <div className="expense-icon">
+            <BarChart2 size={22} />
+          </div>
+          <div>
+            <h2 className="text-[#0F172A] font-bold text-lg">Actividad Semanal</h2>
+            <p className="text-[#64748B] text-xs font-medium">Análisis de flujo</p>
+          </div>
         </div>
-        <h2 className="text-xl font-display font-semibold">Tendencia Semanal</h2>
+        <div className="flex items-center gap-2">
+          <div className="w-2 h-2 rounded-full bg-[#2563FF]" />
+          <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">Actual</span>
+        </div>
       </div>
-      <div className="h-[250px]">
-        <ResponsiveContainer width="100%" height="100%">
-          <AreaChart
-            data={chartData}
-            margin={{
-              top: 10,
-              right: 30,
-              left: 0,
-              bottom: 0,
-            }}
-          >
-            <defs>
-              <linearGradient id="colorMonto" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#10B981" stopOpacity={0.8}/>
-                <stop offset="95%" stopColor="#10B981" stopOpacity={0}/>
-              </linearGradient>
-            </defs>
-            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f5f5f5" />
-            <XAxis 
-              dataKey="name" 
-              axisLine={false} 
-              tickLine={false}
-              dy={10}
-              tick={{ fill: '#64748b', fontSize: 12 }}
-            />
-            <YAxis 
-              axisLine={false} 
-              tickLine={false} 
-              tickFormatter={(value) => formatCurrency(value)}
-              width={80}
-              tick={{ fill: '#64748b', fontSize: 12 }}
-            />
-            <Tooltip 
-              formatter={(value) => [formatCurrency(value as number), "Gasto"]}
-              contentStyle={{ 
-                borderRadius: '0.75rem', 
-                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', 
-                border: '1px solid rgba(229, 231, 235, 0.5)',
-                padding: '10px 14px' 
-              }}
-            />
-            <Area 
-              type="monotone" 
-              dataKey="monto" 
-              stroke="#10B981" 
-              fill="url(#colorMonto)" 
-              strokeWidth={3}
-              activeDot={{ 
-                r: 8, 
-                strokeWidth: 3, 
-                stroke: '#fff',
-                fill: '#10B981'
-              }}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
+
+      <div className="flex-1 w-full overflow-x-auto no-scrollbar">
+        {!Array.isArray(data) || data.length === 0 ? (
+          <div className="h-full flex flex-col items-center justify-center text-[#94A3B8] gap-3">
+            <BarChart2 size={48} className="opacity-20" />
+            <p className="text-sm font-medium">Sin datos registrados</p>
+          </div>
+        ) : (
+          <div style={{ minWidth: Math.max(350, data.length * 65) + 'px', height: '100%' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart 
+                data={chartData} 
+                margin={{ top: 0, right: 20, left: 20, bottom: 25 }}
+                barSize={32}
+              >
+                <CartesianGrid strokeDasharray="0" vertical={false} stroke="#F1F5F9" />
+                <XAxis 
+                  dataKey="name" 
+                  axisLine={false} 
+                  tickLine={false}
+                  tick={{ fill: '#475569', fontSize: 12, fontWeight: 700 }}
+                  dy={10}
+                  interval={0}
+                />
+                <YAxis 
+                  hide
+                  domain={[0, 'dataMax + 10']}
+                />
+                <Tooltip 
+                  cursor={{ fill: 'rgba(37, 99, 255, 0.05)', radius: [12, 12, 12, 12] }}
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      return (
+                        <div className="bg-white/95 backdrop-blur-md border border-[#E5EAF2] p-3 rounded-2xl shadow-neo animate-in fade-in zoom-in duration-200">
+                          <p className="text-[#64748B] text-[10px] font-bold uppercase mb-1">{payload[0].payload.name}</p>
+                          <p className="text-[#0F172A] text-lg font-bold tracking-tight">
+                            {formatCurrency(payload[0].value as number)}
+                          </p>
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
+                />
+                <Bar 
+                  dataKey="monto" 
+                  fill="#2563FF" 
+                  radius={[10, 10, 10, 10]}
+                  background={{ fill: '#F1F5F9', radius: 10 }}
+                  animationDuration={1500}
+                  animationEasing="ease-out"
+                >
+                  {chartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.monto > 0 ? '#2563FF' : '#E5EAF2'} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </div>
     </div>
   );

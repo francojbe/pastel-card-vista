@@ -21,7 +21,6 @@ export default {
 		extend: {
 			fontFamily: {
 				sans: ["Inter", "sans-serif"],
-				display: ["DM Sans", "sans-serif"],
 			},
 			colors: {
 				border: 'hsl(var(--border))',
@@ -57,27 +56,19 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				sidebar: {
-					DEFAULT: 'hsl(var(--sidebar-background))',
-					foreground: 'hsl(var(--sidebar-foreground))',
-					primary: 'hsl(var(--sidebar-primary))',
-					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-					accent: 'hsl(var(--sidebar-accent))',
-					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-					border: 'hsl(var(--sidebar-border))',
-					ring: 'hsl(var(--sidebar-ring))'
-				},
-				// Colores personalizados para la aplicación
-				'blue-light': '#3b82f6',
-				'green-mint': '#10B981',
-				'blue-pastel': '#d3e5fa',
-				'pink-light': '#fef2f2',
-				'pink-pastel': '#fcd5ce',
 			},
 			borderRadius: {
+				'3xl': '24px',
+				'2xl': '16px',
+				'xl': '14px',
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			boxShadow: {
+				'neo': '0 8px 24px rgba(15,23,42,0.06)',
+				'neo-lg': '0 10px 30px rgba(15,23,42,0.08)',
+				'neo-button': '0 10px 20px rgba(37,99,255,0.18)',
 			},
 			keyframes: {
 				'accordion-down': {
